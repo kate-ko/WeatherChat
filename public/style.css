@@ -1,0 +1,13 @@
+.container {
+  padding-top: 50px;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+#loading-container {
+  height: 30px;
+}
+
+#loading {
+  display: none;
+}
