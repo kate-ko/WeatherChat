@@ -5,11 +5,7 @@
 class WeatherBox {
     constructor(name) {
       this.name = name
-      this.tempC
-      this.tempF
-      this.date
-      this.time
-      this.comments = []
+      this.curr = {}
       this.forecastsNotEmpty = false
       this.forecasts = []
     }

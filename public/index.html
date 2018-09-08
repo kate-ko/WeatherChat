@@ -34,7 +34,7 @@
         <div class="city card" data-name={{name}}> 
           <div class="city-box card-body">
             <p>{{name}} <i class="far fa-trash-alt fa-2x remove-city"></i></p>
-            <p>{{tempC}} °C / {{tempF}} °F at {{time}} on {{date}}</p>
+            <p>{{curr.tempC}} °C / {{curr.tempF}} °F at {{curr.time}} on {{curr.date}}</p>
             {{#if forecastsNotEmpty}}
             <button type="button" class="toggle-forecasts btn btn-primary btn-sm">Show archives</button>
             {{/if}}

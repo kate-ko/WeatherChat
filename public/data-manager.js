@@ -19,7 +19,7 @@ class DataManager {
             this.addNewCity(name)
         }
         else { //if the city was in the list before
-            if (index > 0) {
+            if (index > 0) { // if the city is not on the 0 place
                 let city = this.cities.splice(index, 1)[0]
                 this.cities.unshift(city)
                 this.saveToLocalStorage()
@@ -65,27 +65,27 @@ class DataManager {
 
     refresh() {
         this.cities.forEach(city => this.fetch(city).then((data) => {
-            if (city.tempC !== undefined) {
-                let { tempC, tempF, date, time } = city
-                let forecast = { tempC, tempF, date, time }
-                this.addForecast(city, forecast)
+            if (city.curr.tempC !== undefined) {
+                city.forecasts.unshift(city.curr)
                 city.forecastsNotEmpty = true
             }
-            city.tempC = data.current.temp_c
-            city.tempF = city.tempC * 9 / 5 + 32
-            city.date = moment().format('MMMM Do YYYY')
-            city.time = moment().format('HH:mm:ss')
+            city.curr = this.getCityCurr(data)
+            this.saveToLocalStorage()
             this.render()
         }))
     }
 
-    addForecast(city, forecast) {
-        city.forecasts.unshift(forecast);
-        this.saveToLocalStorage()
+    getCityCurr(data) {
+        let tempC = data.current.temp_c
+        let tempF = tempC * 9 / 5 + 32
+        let date = moment().format('MMMM Do YYYY')
+        let time = moment().format('HH:mm:ss')
+        return {tempC, tempF, date, time}
     }
 
     sort() {
-        this.cities.sort((a, b) => a.name !== b.name ? a.name < b.name ? -1 * this.order : this.order : 0);
+        this.cities.sort((a, b) => a.name !== b.name ? a.name < b.name ?
+                                        -1 * this.order : this.order : 0)
         this.order *= -1
         this.saveToLocalStorage()
         this.render()
