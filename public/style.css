@@ -1,13 +1,19 @@
+/*body {
+  background-image: url('blue-sky.jpg');
+}*/
+
 .container {
-  padding-top: 50px;
-  padding-left: 100px;
-  padding-right: 100px;
+  width: 600px;
+  padding-top: 20px;
 }
 
-#loading-container {
-  height: 30px;
-}
-
-#loading {
+.forecasts-container {
+  padding: 10px;
+  font-size: 15px;
+  font-family: 'Courier New', Courier, monospace;
   display: none;
+}
+
+.show {
+  display: block;
 }

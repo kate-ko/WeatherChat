@@ -1,14 +1,25 @@
+// Handlebar setting
+let source = $('#cities-template').html();
+let template = Handlebars.compile(source);
 
 class dataManager {
   constructor() {
     this.STORAGE_ID = 'cities';
     this.cities = this.getFromLocalStorage();
-    console.log(this.cities);
   }
 
   addCity(name) {
-    fetch(this.cities, name);
+    let index = this.findCityByName(name);
+    let city
+    if (index === -1) {  //if didn't exist before
+      city = new weatherBox(name);
+    }
+    else {
+      city = this.cities.splice(index, 1)[0]
+    }
+    this.cities.unshift(city); // push city to the top of an array
     this.saveToLocalStorage();
+    this.refresh();
   }
 
   getFromLocalStorage() {
@@ -20,70 +31,84 @@ class dataManager {
   }
 
   render() {
-    renderCities(this.cities);
+    let newHTML = template(this.cities);
+    $('.cities').html(newHTML);
+  }
+
+  findCityByName(name) {
+    for (let index in this.cities) {
+      if (this.cities[index].name === name) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  removeCity(name) {
+    let index = this.findCityByName(name);
+    if (index != -1) {
+      this.cities.splice(index, 1);
+      this.saveToLocalStorage();
+    }
+    else {
+      console.log("doesn't exist");
+    }
+  }
+
+  removeCityByID(id) {
+    this.cities.splice(id, 1);
+    this.saveToLocalStorage();
+    if (id === 0) {
+      this.render()
+    }
+  }
+
+  refresh() {
+    this.cities.forEach(city => fetch(city))
+  }
+
+  addForecast(city, temp) {
+    let date = moment().format('MMMM Do YYYY, h:mm:ss a');
+    city.forecasts.push({temp, date})
   }
 }
 
-class weatherBox {
-  constructor(name, temper) {
-    this.name = name;
-    this.temperature = temper;
-    this.comments = [];
-    this.id = guid();
-  }
-
-  getUid() {
-    return 'hfjgkdhfd';
-  }
-
-}
-
-var fetch = function(cities, city) {
-  let url = "http://api.apixu.com/v1/current.json?key=9a0b2842afce48889ca84836181908&q=" + city;
+function fetch(city) {
+  let url = "http://api.apixu.com/v1/current.json?key=9a0b2842afce48889ca84836181908&q=" + city.name;
 
   $.ajax({
     method: "GET",
     url: url,
-    success: function(data) {
-      console.log("success");
-      let temper = data.current.temp_c;
-      let newCity = new weatherBox(city, temper);
-      cities.unshift(newCity);
+    success: function (data) {
+      city.temperature = data.current.temp_c;
+      dataApp.addForecast(city, data.current.temp_c);
       dataApp.render();
     },
-    error: function(jqXHR, textStatus, errorThrown) {
+    error: function (jqXHR, textStatus, errorThrown) {
       console.log(textStatus);
     }
-  }); 
+  });
 };
 
-function renderCities(cities) {
-  let source, template, newHTML;
-  source = $('#cities-template').html();
-  template = Handlebars.compile(source);
-  newHTML = template(cities);
-  $('.cities').html(newHTML);
-}
-
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
 var dataApp = new dataManager();
-dataApp.render();
+dataApp.refresh();
+console.log(dataApp.cities)
 
-$(".find-city").on("click", function() {
-  var searchData = $("#cityToFind").val();
+function trimString(str) {
+  str = str.trim().toUpperCase();
+  return str;
+}
+
+$(".find-city").on("click", function () {
+  let searchData = $("#cityToFind").val();
+  searchData = trimString(searchData);
   dataApp.addCity(searchData);
 });
 
-$(document).ajaxStart(function () {
-  $("#loading").show();
-   }).ajaxStop(function () {
-  $("#loading").hide();
+$(".cities").on("click", ".remove-city", function () {
+  let index = $(this).closest(".city").index();
+  console.log(index)
+  dataApp.removeCityByID(index)
+  dataApp.refresh();
 });
+

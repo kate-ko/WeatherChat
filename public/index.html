@@ -1,37 +1,55 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+    crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="style.css">
   <title>Weather Chat</title>
 </head>
+
 <body>
   <div class='container'>
-      <h2> Weather Chat</h2>
+    <h2> Weather Chat <i class="fas fa-umbrella-beach"></i></h2>
+    <form id="check-city">
       <div class="input-group mb-3">
-          <input type="text" id="cityToFind" class="form-control" placeholder="Enter city" aria-label="Recipient's username" aria-describedby="basic-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary find-city" type="button">Find</button>
-          </div>
+        <input type="text" id="cityToCheck" class="form-control" placeholder="Enter city">
+        <div class="input-group-append"><button class="btn btn-info" type="submit">Check</button></div>
       </div>
-      <div id="loading-container"><div id="loading">Searching city...</div></div>
-      <div class='cities'>
-      </div>
+    </form>
+    <button type="button" class="sort btn btn-secondary">Sort</button><br><br>
+    <div class='cities'>
+    </div>
   </div>
- 
+
   <script type="text/javascript" src="jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="handlebars/dist/handlebars.min.js"></script>
+  <script type="text/javascript" src="moment/min/moment.min.js"></script>
   <script id="cities-template" type="text/x-handlebars-template">
-      <ul>
         {{#each this}}
-        <li><a href="#">{{name}} {{temperature}}</a></li>
-        {{/each}}
-      </ul> 
+        <div class="city card" data-name={{name}}> 
+          <div class="city-box card-body">
+            <p>{{name}} <i class="far fa-trash-alt fa-2x remove-city"></i></p>
+            <p>{{tempC}} °C / {{tempF}} °F at {{time}} on {{date}}</p>
+            {{#if forecastsNotEmpty}}
+            <button type="button" class="toggle-forecasts btn btn-primary btn-sm">Show archives</button>
+            {{/if}}
+              <div class="forecasts-container">
+                 {{#each forecasts}}
+                 {{tempC}} °C / {{tempF}} °F at {{time}} on {{date}}<br>
+                 {{/each}}
+              </div>
+         </div> 
+        </div> 
+       {{/each}}
+      
   </script>
-  <script type="text/javascript" src="script.js"></script>
+  <script src="main.js" type="module"></script>
 
 </body>
+
 </html>
